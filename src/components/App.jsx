@@ -39,15 +39,15 @@ export const App = () => {
 
       if (error === true) {
         toast.warn('🦄 Wow so easy!', {
-          position: "top-center",
+          position: 'top-center',
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "light",
-          });
+          theme: 'light',
+        });
       }
 
       const threshold = units === 'metric' ? 20 : 60;
@@ -81,17 +81,16 @@ export const App = () => {
   return (
     <div className="app" style={{ backgroundImage: `url(${bg})` }}>
       <div className="overlay">
-      <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              rtl={false}
-              theme="light"
-            />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          rtl={false}
+          theme="light"
+        />
         {weather && (
           <div className="container">
-
             <div className="section section__inputs">
               <input
                 onKeyDown={enterKeyPressed}
@@ -99,7 +98,7 @@ export const App = () => {
                 name="city"
                 placeholder="Enter City..."
               />
-              <button onClick={e => handleUnitsClick(e)}>°F</button>
+              <button onClick={e => handleUnitsClick(e)}>Switch to °F</button>
             </div>
 
             <div className="section section__temperature">
