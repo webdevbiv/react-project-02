@@ -23,7 +23,7 @@ body {
 
 .container {
   max-width: 800px;
-  height: 100vh;
+  height: 100%;
 
   display: flex;
   align-items: center;
@@ -167,5 +167,11 @@ input:hover {
     margin-right: auto;
     margin-left: auto;
     padding: 10px;
+  }
+}
+
+@media screen and (min-height: 700px) {
+  .container {
+    height: 100vh;
   }
 }
