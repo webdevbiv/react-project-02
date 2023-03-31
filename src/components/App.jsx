@@ -73,10 +73,6 @@ export const App = () => {
     }
   };
 
-  //
-  // if (weather !== null && weather.temp <= threshold) setBg(coldBg);
-  // else setBg(hotBg);
-
   return (
     <div className="app" style={{ backgroundImage: `url(${bg})` }}>
       <ToastContainer
@@ -118,11 +114,4 @@ export const App = () => {
       </div>
     </div>
   );
-  //  return (
-  //
-  //
-
-  //     </div>
-  // </div>
-  //  );
 };
