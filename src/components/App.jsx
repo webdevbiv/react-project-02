@@ -25,7 +25,7 @@ export const App = () => {
         })
         .then(data => {
           if (data.cod === 200) {
-            console.log(data);
+            // console.log(data);
             setWeather(getFormattedWeatherData(data));
             setShowContent(true);
             const threshold = units === 'metric' ? 20 : 60;
@@ -92,7 +92,11 @@ export const App = () => {
               name="city"
               placeholder="Enter City..."
             />
-            <button onClick={e => handleUnitsClick(e)}>Switch to °F</button>
+            {showContent === true ? (
+              <button onClick={e => handleUnitsClick(e)}>Switch to °F</button>
+            ) : (
+              <button>Switch to °F</button>
+            )}
           </div>
 
           {showContent && (
