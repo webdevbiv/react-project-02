@@ -1,62 +1,55 @@
 import hotBg from '../assets/hot.jpg';
+import coldBg from '../assets/cold.jpg';
 import { useEffect, useState } from 'react';
 import { getWeather, getFormattedWeatherData } from 'services/weatherService';
-import coldBg from '../assets/cold.jpg';
 import Descriptions from './Descriptions/Descriptions';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const App = () => {
-  const [weather, setWeather] = useState(null);
+  const [weather, setWeather] = useState({});
   const [units, setUnits] = useState('metric');
   const [city, setCity] = useState('kiev');
   const [bg, setBg] = useState(hotBg);
-  const [error, setError] = useState(false);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     const fetchWeatherData = async () => {
-      const query = await getWeather(city, units)
+      await getWeather(city, units)
         .then(res => {
-          console.log(res);
-
           if (!res.ok) {
-            console.log(res);
-            setError(true);
-            setCity('kiev');
             throw new Error('Error');
           } else {
             return res.json();
           }
         })
         .then(data => {
-          return getFormattedWeatherData(data);
+          if (data.cod === 200) {
+            console.log(data);
+            setWeather(getFormattedWeatherData(data));
+            setShowContent(true);
+            const threshold = units === 'metric' ? 20 : 60;
+            data.main.temp <= threshold ? setBg(coldBg) : setBg(hotBg);
+          }
         })
         .catch(e => {
           console.log(e.message);
+          setWeather(null);
+          toast.warn('No Such City', {
+            position: 'top-center',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            theme: 'dark',
+          });
         });
-
-      setWeather(query);
-
-      if (error === true) {
-        toast.warn('🦄 Wow so easy!', {
-          position: 'top-center',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light',
-        });
-      }
-
-      const threshold = units === 'metric' ? 20 : 60;
-      if (query.temp <= threshold) setBg(coldBg);
-      else setBg(hotBg);
     };
 
     fetchWeatherData();
-  }, [units, city, error]);
+  }, [units, city]);
 
   const handleUnitsClick = e => {
     const button = e.currentTarget;
@@ -73,34 +66,40 @@ export const App = () => {
 
   const enterKeyPressed = e => {
     if (e.key === 'Enter') {
+      setWeather(null);
+      setShowContent(false);
       setCity(e.currentTarget.value.trim());
       e.currentTarget.blur();
     }
   };
 
+  //
+  // if (weather !== null && weather.temp <= threshold) setBg(coldBg);
+  // else setBg(hotBg);
+
   return (
     <div className="app" style={{ backgroundImage: `url(${bg})` }}>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        rtl={false}
+        theme="light"
+      />
       <div className="overlay">
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          rtl={false}
-          theme="light"
-        />
-        {weather && (
-          <div className="container">
-            <div className="section section__inputs">
-              <input
-                onKeyDown={enterKeyPressed}
-                type="text"
-                name="city"
-                placeholder="Enter City..."
-              />
-              <button onClick={e => handleUnitsClick(e)}>Switch to °F</button>
-            </div>
+        <div className="container">
+          <div className="section section__inputs">
+            <input
+              onKeyDown={enterKeyPressed}
+              type="text"
+              name="city"
+              placeholder="Enter City..."
+            />
+            <button onClick={e => handleUnitsClick(e)}>Switch to °F</button>
+          </div>
 
+          {showContent && (
             <div className="section section__temperature">
               <div className="icon">
                 <h3>{`${weather.name}, ${weather.country}`}</h3>
@@ -108,17 +107,22 @@ export const App = () => {
                 <h3>{weather.description}</h3>
               </div>
               <div className="temperature">
-                <h1>{`${weather.temp.toFixed()} °${
+                <h1>{`${weather.tempFixed} °${
                   units === 'metric' ? 'C' : 'F'
                 }`}</h1>
               </div>
             </div>
-
-            {/* bottom description */}
-            <Descriptions weather={weather} units={units} />
-          </div>
-        )}
+          )}
+          {showContent && <Descriptions weather={weather} units={units} />}
+        </div>
       </div>
     </div>
   );
+  //  return (
+  //
+  //
+
+  //     </div>
+  // </div>
+  //  );
 };
